@@ -15,56 +15,21 @@ SURFACE = pygame.display.set_mode((disp_wd, disp_hg), pygame.FULLSCREEN)
 FPSL = pygame.time.Clock()
 
 logo = pygame.image.load("imgs/logo.png").convert_alpha()
-start_btn_img = (pygame.image.load("imgs/btn_s0.png").convert_alpha(),
-                 pygame.image.load("imgs/btn_s1.png").convert_alpha())
 
-ring_img = (pygame.image.load("imgs/L00.png").convert_alpha(),
-            pygame.image.load("imgs/L01.png").convert_alpha(),
-            pygame.image.load("imgs/L02.png").convert_alpha(),
-            pygame.image.load("imgs/L03.png").convert_alpha(),
-            pygame.image.load("imgs/L04.png").convert_alpha(),
-            pygame.image.load("imgs/L05.png").convert_alpha(),
-            pygame.image.load("imgs/L06.png").convert_alpha(),
-            pygame.image.load("imgs/L07.png").convert_alpha(),
-            pygame.image.load("imgs/L08.png").convert_alpha(),
-            pygame.image.load("imgs/L09.png").convert_alpha(),
-            pygame.image.load("imgs/L10.png").convert_alpha(),
-            pygame.image.load("imgs/L11.png").convert_alpha(),
-            pygame.image.load("imgs/LWL.png").convert_alpha(),
-            pygame.image.load("imgs/LWR.png").convert_alpha(),
-            pygame.image.load("imgs/LDR.png").convert_alpha(),
-            pygame.image.load("imgs/LLS.png").convert_alpha())
+start_btn_img = [pygame.image.load(f"imgs/btn_s{i}.png").convert_alpha() for i in range(2)]
+
+ring_img = [pygame.image.load(f"imgs/L{str(i).zfill(2)}.png").convert_alpha() for i in range(12)] + \
+           [pygame.image.load(f"imgs/{w}.png").convert_alpha() for w in ['LWL', 'LWR', 'LDR', 'LLS']]
 
 ring_x = (191, 260, 314, 331, 293, 239, 167, 104, 68, 64, 71, 118, 16, 330, 290, 19)
 ring_y = (89, 100, 149, 234, 304, 348, 357, 326, 280, 213, 142, 100, 63, 77, 283, 277)
 
 exit_btn_img = pygame.image.load("imgs/btn_exit.png").convert_alpha()
-
-play_btn_img = (pygame.image.load("imgs/btn_00.png").convert_alpha(),
-                pygame.image.load("imgs/btn_01.png").convert_alpha(),
-                pygame.image.load("imgs/btn_10.png").convert_alpha(),
-                pygame.image.load("imgs/btn_11.png").convert_alpha(),
-                pygame.image.load("imgs/btn_20.png").convert_alpha(),
-                pygame.image.load("imgs/btn_21.png").convert_alpha())
-
-num_img = (pygame.image.load("imgs/n0.png").convert_alpha(),
-           pygame.image.load("imgs/n1.png").convert_alpha(),
-           pygame.image.load("imgs/n2.png").convert_alpha(),
-           pygame.image.load("imgs/n3.png").convert_alpha(),
-           pygame.image.load("imgs/n4.png").convert_alpha(),
-           pygame.image.load("imgs/n5.png").convert_alpha(),
-           pygame.image.load("imgs/n6.png").convert_alpha(),
-           pygame.image.load("imgs/n7.png").convert_alpha(),
-           pygame.image.load("imgs/n8.png").convert_alpha(),
-           pygame.image.load("imgs/n9.png").convert_alpha())
-
+play_btn_img = [pygame.image.load(f"imgs/btn_{i}.png").convert_alpha() for i in ['00', '01', '10', '11', '20', '21']]
+num_img = [pygame.image.load(f"imgs/n{i}.png").convert_alpha() for i in range(10)]
 bgimg = pygame.image.load("imgs/back_img.jpg").convert()
-
 himg = pygame.image.load("imgs/hands.png").convert_alpha()
-
-coin_img = (pygame.image.load("imgs/coin0.png").convert_alpha(),
-            pygame.image.load("imgs/coin1.png").convert_alpha())
-
+coin_img = [pygame.image.load(f"imgs/coin{i}.png").convert_alpha() for i in range(2)]
 reset_img = pygame.image.load("imgs/reset.png").convert_alpha()
 
 snd_jk = pygame.mixer.Sound("sound/jk.wav")
