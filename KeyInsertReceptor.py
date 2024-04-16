@@ -4,9 +4,9 @@ import pygame
 from pygame.locals import K_LEFT, K_DOWN, K_RIGHT, K_RETURN, K_ESCAPE
 
 
-class KeyInsertResponsor:
+class KeyInsertReceptor:
     """
-    click_loc : 0(가위), 1(주먹), 2(보), 3(insert coin), 4(exit)
+    click_loc : 0(가위), 1(주먹), 2(보), 3(insert coin), 4(exit), 9(None)
     """
 
     @staticmethod
@@ -26,6 +26,8 @@ class KeyInsertResponsor:
             return 3
         elif key == K_ESCAPE:
             return 4
+        else:
+            return 9
 
     @staticmethod
     def get_mouse_click_loc():

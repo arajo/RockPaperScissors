@@ -3,8 +3,8 @@ import pygame
 from pygame.locals import QUIT, MOUSEBUTTONDOWN, Rect, KEYDOWN
 from random import randint
 
-from functions import get_winner_coin
-from KeyInsertReponsor import KeyInsertResponsor
+from WinnerCalculator import WinnerCalculator
+from KeyInsertReceptor import KeyInsertReceptor
 
 pygame.init()
 
@@ -14,6 +14,7 @@ disp_hg = 480
 SURFACE = pygame.display.set_mode((disp_wd, disp_hg), pygame.FULLSCREEN)
 FPSL = pygame.time.Clock()
 
+logo = pygame.image.load("imgs/logo.png").convert_alpha()
 start_btn_img = (pygame.image.load("imgs/btn_s0.png").convert_alpha(),
                  pygame.image.load("imgs/btn_s1.png").convert_alpha())
 
@@ -61,8 +62,6 @@ bgimg = pygame.image.load("imgs/back_img.jpg").convert()
 
 himg = pygame.image.load("imgs/hands.png").convert_alpha()
 
-logo = pygame.image.load("imgs/logo.png").convert_alpha()
-
 coin_img = (pygame.image.load("imgs/coin0.png").convert_alpha(),
             pygame.image.load("imgs/coin1.png").convert_alpha())
 
@@ -81,8 +80,7 @@ snd_get_coin = pygame.mixer.Sound("sound/get_coin.wav")
 
 def num_print(num, loc):
     tem = 999999
-    if num > 9999999:
-        num = 9999999
+    num = min(num, tem)
 
     for i in range(0, 7):
         if num > tem:
@@ -146,8 +144,9 @@ def main():
     coin_i = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
     can_play = 0
-    mode = 0
-    alp = 0
+    mode = 0  # 0: intro, 2:idle, 3:
+    initial_time = 0
+    max_initial_time = 10
     hand_flk = 0
     cur_hand = 0
     ring_num = 0
@@ -158,27 +157,26 @@ def main():
         click_loc = 9
 
         for event in pygame.event.get():
-            key_insert_responsor = KeyInsertResponsor()
+            key_insert_receptor = KeyInsertReceptor()
             if event.type == QUIT:
-                key_insert_responsor.exit()
+                key_insert_receptor.exit()
 
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    click_loc = key_insert_responsor.get_mouse_click_loc()
+                    click_loc = key_insert_receptor.get_mouse_click_loc()
 
             if click_loc == 9:
                 if event.type == KEYDOWN:
-                    click_loc = key_insert_responsor.get_key_loc(event.key)
+                    click_loc = key_insert_receptor.get_key_loc(event.key)
 
         if mode == 0:
             # intro
             SURFACE.fill((0, 0, 0))
             SURFACE.blit(logo, (163, 145))
 
-            alp += 1
-            if alp > 40:
-                alp = 0
-                mode = 1
+            initial_time += 1
+            if initial_time > max_initial_time:
+                mode, initial_time = 1, 0
 
         else:
             if mode == 1:
@@ -214,7 +212,7 @@ def main():
                     start_btn(0)
 
             elif mode == 2:
-
+                # play
                 SURFACE.blit(bgimg, (0, 0))
                 num_print(all_coin * 100, 0)
                 num_print(coin * 100, 1)
@@ -227,29 +225,10 @@ def main():
                     play_btn(click_loc)
                     if can_play:
                         can_play = 0
-                        res = randint(0, 50)
                         hand_flk = 0
                         snd_bb.play()
 
-                        if res < 8:
-
-                            ring_num = 12
-                            cur_hand = click_loc - 1
-
-                            if cur_hand < 0:
-                                cur_hand = 2
-
-                        elif res < 30:
-
-                            ring_num = 14
-                            cur_hand = click_loc
-
-                        else:
-
-                            ring_num = 15
-                            cur_hand = click_loc + 1
-                            if cur_hand > 2:
-                                cur_hand = 0
+                        cur_hand, ring_num = WinnerCalculator.get_winner(click_loc)
 
                 else:
                     play_btn(4)
@@ -290,12 +269,12 @@ def main():
                 hand_play(cur_hand)
 
             elif mode == 3:
-
+                # choose the number of coins for winner.
                 if time_del < 60:
                     time_del += 1
 
                 if time_del == 59:
-                    get_coin, tg_ring = get_winner_coin()
+                    get_coin, tg_ring = WinnerCalculator.get_winner_coin()
 
                 SURFACE.blit(bgimg, (0, 0))
                 num_print(all_coin * 100, 0)
@@ -327,7 +306,7 @@ def main():
                     play_btn(4)
 
             elif mode == 4:
-
+                # give the player coins.
                 SURFACE.blit(bgimg, (0, 0))
 
                 time_del += 1
