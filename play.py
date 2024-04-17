@@ -105,15 +105,16 @@ def main():
     exit_press, coin_press, win_led, tg_ring = 0, 0, 0, 0
     coin_x, coin_y, coin_i = params["coin_x"], params["coin_y"], params["coin_i"]
 
-    mode = params["initial_mode"]
+    mode = params["mode"]["intro"]
     can_play, initial_time, hand_flk, cur_hand, ring_num, time_del = 0, 0, 0, 0, 0, 0
 
     while True:
 
-        click_loc = 9
+        key_insert_receptor = KeyInsertReceptor()
+        click_loc = key_insert_receptor.initial_loc
 
         for event in pygame.event.get():
-            key_insert_receptor = KeyInsertReceptor()
+
             if event.type == QUIT:
                 key_insert_receptor.exit()
 
@@ -121,21 +122,21 @@ def main():
                 if event.button == 1:
                     click_loc = key_insert_receptor.get_mouse_click_loc()
 
-            if click_loc == 9:
+            if click_loc == key_insert_receptor.initial_loc:
                 if event.type == KEYDOWN:
                     click_loc = key_insert_receptor.get_key_loc(event.key)
 
-        if mode == 0:
+        if mode == params["mode"]["intro"]:
             # intro
             SURFACE.fill((0, 0, 0))
             SURFACE.blit(logo, (163, 145))
 
             initial_time += 1
             if initial_time > params["max_initial_time"]:
-                mode = 1
+                mode = params["mode"]["idle"]
 
         else:
-            if mode == 1:
+            if mode == params["mode"]["idle"]:
                 # idle
                 SURFACE.blit(bgimg, (0, 0))
 
@@ -163,11 +164,11 @@ def main():
                         coin -= 1
                         can_play = 1
                         snd_jk.play()
-                        mode = 2
+                        mode = params["mode"]["play"]
 
                     start_btn(0)
 
-            elif mode == 2:
+            elif mode == params["mode"]["play"]:
                 # play
                 SURFACE.blit(bgimg, (0, 0))
                 num_print(all_coin * 100, 0)
@@ -211,11 +212,11 @@ def main():
 
                     if hand_flk > 23:
                         if ring_num == 15:
-                            mode = 1
+                            mode = params["mode"]["idle"]
                         elif ring_num == 14:
                             can_play = 1
                         else:
-                            mode = 3
+                            mode = params["mode"]["draw_prize"]
                             snd_rule.play(loops=-1)
                             ring_num = 0
                             time_del = 0
@@ -224,7 +225,7 @@ def main():
 
                 hand_play(cur_hand)
 
-            elif mode == 3:
+            elif mode == params["mode"]["draw_prize"]:
                 # choose the number of coins for winner.
                 if time_del < 60:
                     time_del += 1
@@ -254,14 +255,14 @@ def main():
                     snd_yap.play()
                     time_del = -20
                     coin_cnt = 0
-                    mode = 4
+                    mode = params["mode"]["give_prize"]
 
                 if click_loc < 3:
                     play_btn(click_loc)
                 else:
                     play_btn(4)
 
-            elif mode == 4:
+            elif mode == params["mode"]["give_prize"]:
                 # give the player coins.
                 SURFACE.blit(bgimg, (0, 0))
 
@@ -288,12 +289,12 @@ def main():
                 play_btn(4)
 
                 if time_del == 30:
-                    mode = 1
+                    mode = params["mode"]["idle"]
 
             if click_loc == 4:
                 # exit/reset
                 exit_press = 1
-                if mode == 1 and coin == 0:
+                if mode == params["mode"]["idle"] and coin == 0:
                     reset_btn(0)
 
                 else:
@@ -301,7 +302,7 @@ def main():
 
             else:
                 if exit_press:
-                    if mode == 1 and coin == 0:
+                    if mode == params["mode"]["idle"] and coin == 0:
                         exit_press = 0
                         coin = 20
                         all_coin = 0
@@ -311,7 +312,7 @@ def main():
                         sys.exit()
 
                 else:
-                    if mode == 1 and coin == 0:
+                    if mode == params["mode"]["idle"] and coin == 0:
                         reset_btn(1)
 
                     else:

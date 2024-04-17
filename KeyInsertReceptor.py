@@ -8,14 +8,15 @@ class KeyInsertReceptor:
     """
     click_loc : 0(가위), 1(주먹), 2(보), 3(insert coin), 4(exit), 9(None)
     """
+    def __init__(self,):
+        self.initial_loc = 9
 
     @staticmethod
     def exit():
         pygame.quit()
         sys.exit()
 
-    @staticmethod
-    def get_key_loc(key):
+    def get_key_loc(self, key):
         if key == K_LEFT:
             return 0
         elif key == K_DOWN:
@@ -27,10 +28,9 @@ class KeyInsertReceptor:
         elif key == K_ESCAPE:
             return 4
         else:
-            return 9
+            return self.initial_loc
 
-    @staticmethod
-    def get_mouse_click_loc():
+    def get_mouse_click_loc(self):
         mouse_loc = pygame.mouse.get_pos()
 
         if 431 < mouse_loc[1] < 476:
@@ -40,9 +40,13 @@ class KeyInsertReceptor:
                 return 1
             elif 348 < mouse_loc[0] < 427:
                 return 2
+            else:
+                return self.initial_loc
         else:
             if 481 < mouse_loc[0] < 622 and 236 < mouse_loc[1] < 288:
                 return 3
 
-            if 12 < mouse_loc[0] < 56 and 58 < mouse_loc[1] < 106:
+            elif 12 < mouse_loc[0] < 56 and 58 < mouse_loc[1] < 106:
                 return 4
+            else:
+                return self.initial_loc

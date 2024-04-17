@@ -3,7 +3,14 @@ params = {
     "display_height": 480,
     "fps": 30,
     "initial_coins": 20,
-    "initial_mode": 0,  # 0: intro, 2: idle, 3: draw a prize, 4: give a prize
+    "initial_mode": 0,
+    "mode": {
+        "intro": 0,
+        "idle": 1,
+        "play": 2,
+        "draw_prize": 3,
+        "give_prize": 4
+    },
     "max_initial_time": 10,
     "coin_x": [0] * 20,
     "coin_y": [0] * 20,
