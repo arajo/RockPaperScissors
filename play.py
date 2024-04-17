@@ -16,34 +16,28 @@ FPSL = pygame.time.Clock()
 
 # Load images
 image_loader = ImageLoader()
-logo = pygame.image.load(image_loader.load_logo()).convert_alpha()
-start_btn_img = [pygame.image.load(image_loader.image_root_path + f"btn_s{i}.png").convert_alpha() for i in range(2)]
-
-ring_img = [pygame.image.load(image_loader.image_root_path + f"L{str(i).zfill(2)}.png").convert_alpha() for i in
-            range(12)] + \
-           [pygame.image.load(image_loader.image_root_path + f"{w}.png").convert_alpha() for w in
-            ['LWL', 'LWR', 'LDR', 'LLS']]
-
-exit_btn_img = pygame.image.load(image_loader.load_exit_btn()).convert_alpha()
-play_btn_img = [pygame.image.load(image_loader.image_root_path + f"btn_{i}.png").convert_alpha() for i in
-                ['00', '01', '10', '11', '20', '21']]
-num_img = [pygame.image.load(image_loader.image_root_path + f"n{i}.png").convert_alpha() for i in range(10)]
-bgimg = pygame.image.load(image_loader.load_background()).convert()
-himg = pygame.image.load(image_loader.load_hands()).convert_alpha()
-coin_img = [pygame.image.load(image_loader.image_root_path + f"coin{i}.png").convert_alpha() for i in range(2)]
-reset_img = pygame.image.load(image_loader.load_reset_btn()).convert_alpha()
+logo = image_loader.load_logo()
+start_btn_img = image_loader.load_start_btn()
+ring_img = image_loader.load_roulette()
+exit_btn_img = image_loader.load_exit_btn()
+play_btn_img = image_loader.load_play_btn()
+num_img = image_loader.load_coin_banner_numbers()
+bgimg = image_loader.load_background()
+himg = image_loader.load_hands()
+coin_img = image_loader.load_coins()
+reset_img = image_loader.load_reset_btn()
 
 # Load sounds
 sound_loader = SoundLoader()
-snd_jk = pygame.mixer.Sound(sound_loader.load_jjamggam())
-snd_insert = pygame.mixer.Sound(sound_loader.load_insert_coin())
-snd_bb = pygame.mixer.Sound(sound_loader.load_bbo())
-snd_win = pygame.mixer.Sound(sound_loader.load_win())
-snd_lose = pygame.mixer.Sound(sound_loader.load_lose())
-snd_draw = pygame.mixer.Sound(sound_loader.load_draw())
-snd_rule = pygame.mixer.Sound(sound_loader.load_spinning_roulette())
-snd_yap = pygame.mixer.Sound(sound_loader.load_yappi())
-snd_get_coin = pygame.mixer.Sound(sound_loader.load_get_coin())
+snd_jk = sound_loader.load_jjamggam()
+snd_insert = sound_loader.load_insert_coin()
+snd_bb = sound_loader.load_bbo()
+snd_win = sound_loader.load_win()
+snd_lose = sound_loader.load_lose()
+snd_draw = sound_loader.load_draw()
+snd_rule = sound_loader.load_spinning_roulette()
+snd_yap = sound_loader.load_yappi()
+snd_get_coin = sound_loader.load_get_coin()
 
 
 def num_print(num, loc):
