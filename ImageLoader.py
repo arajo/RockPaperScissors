@@ -4,6 +4,8 @@ import pygame
 class ImageLoader:
     def __init__(self):
         self.image_root_path = "imgs/"
+        self.logo_loc = (163, 145)
+        self.background_loc = (0, 0)
 
     def load_logo(self):
         path = self.image_root_path + "logo.png"

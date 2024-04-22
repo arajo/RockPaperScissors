@@ -3,6 +3,7 @@ import pygame
 from pygame.locals import QUIT, MOUSEBUTTONDOWN, Rect, KEYDOWN
 from random import randint
 
+from HandController import HandController
 from Params import params
 from ImageLoader import ImageLoader
 from SoundLoader import SoundLoader
@@ -25,7 +26,7 @@ num_img = image_loader.load_coin_banner_numbers()
 bgimg = image_loader.load_background()
 himg = image_loader.load_hands()
 coin_img = image_loader.load_coins()
-reset_img = image_loader.load_reset_btn()
+reset_btn_img = image_loader.load_reset_btn()
 
 # Load sounds
 sound_loader = SoundLoader()
@@ -62,24 +63,22 @@ def hand_play(num):
     SURFACE.blit(himg, (141, 168), Rect(num * 195, 0, 195, 195))
 
 
-def reset_btn(psh):
-    if psh:
-        SURFACE.blit(reset_img, (11, 55))
-    else:
-        SURFACE.blit(reset_img, (11, 59))
+def reset_exit_btn(psh, btn_type):
+    """
+    :param psh: 0 or 1
+    :param btn_type: "reset" or "exit"
+    :return:
+    """
+    btn_img = reset_btn_img if btn_type == 'reset' else exit_btn_img
 
-
-def exit_btn(psh):
     if psh:
-        SURFACE.blit(exit_btn_img, (11, 55))
+        SURFACE.blit(btn_img, (11, 55))
     else:
-        SURFACE.blit(exit_btn_img, (11, 59))
+        SURFACE.blit(btn_img, (11, 59))
 
 
 def ring_on(num):
-    ring_x = params["ring_x"]
-    ring_y = params["ring_y"]
-    SURFACE.blit(ring_img[num], (ring_x[num], ring_y[num]))
+    SURFACE.blit(ring_img[num], (params["ring_x"][num], params["ring_y"][num]))
 
 
 def play_btn(num):
@@ -100,7 +99,8 @@ def main():
     coin_x, coin_y, coin_i = params["coin_x"], params["coin_y"], params["coin_i"]
 
     mode = params["mode"]["intro"]
-    can_play, initial_time, hand_flk, cur_hand, ring_num, time_del = 0, 0, 0, 0, 0, 0
+    can_play, initial_time, ring_num, time_del = 0, 0, 0, 0
+    hand_controller = HandController()
 
     while True:
 
@@ -123,7 +123,7 @@ def main():
         if mode == params["mode"]["intro"]:
             # intro
             SURFACE.fill((0, 0, 0))
-            SURFACE.blit(logo, (163, 145))
+            SURFACE.blit(logo, image_loader.logo_loc)
 
             initial_time += 1
             if initial_time > params["max_initial_time"]:
@@ -132,16 +132,13 @@ def main():
         else:
             if mode == params["mode"]["idle"]:
                 # idle
-                SURFACE.blit(bgimg, (0, 0))
+                SURFACE.blit(bgimg, image_loader.background_loc)
 
-                hand_flk += 1
-                if hand_flk >= params["fps"] * 1:
-                    hand_flk = 0
-                    cur_hand += 1
-                    if cur_hand > 2:
-                        cur_hand = 0
+                hand_controller.increase_hand_flk()
+                if hand_controller.hand_flk >= params["fps"] * 1:
+                    hand_controller.initiate_and_increase()
 
-                hand_play(cur_hand)
+                hand_play(hand_controller.current_hand)
                 num_print(all_coin * 100, 0)
                 num_print(coin * 100, 1)
                 play_btn(4)
@@ -164,7 +161,7 @@ def main():
 
             elif mode == params["mode"]["play"]:
                 # play
-                SURFACE.blit(bgimg, (0, 0))
+                SURFACE.blit(bgimg, image_loader.background_loc)
                 num_print(all_coin * 100, 0)
                 num_print(coin * 100, 1)
                 start_btn(0)
@@ -175,26 +172,22 @@ def main():
 
                     play_btn(click_loc)
                     if can_play:
-                        can_play = 0
-                        hand_flk = 0
+                        can_play, hand_flk = 0, 0
                         snd_bb.play()
 
-                        cur_hand, ring_num = WinnerCalculator.get_winner(click_loc)
+                        hand_controller.current_hand, ring_num = WinnerCalculator.get_winner(click_loc)
 
                 else:
                     play_btn(4)
 
                 if can_play:
-                    hand_flk += 1
-                    if hand_flk >= 2:
-                        hand_flk = 0
-                        cur_hand += 1
-                        if cur_hand > 2:
-                            cur_hand = 0
+                    hand_controller.increase_hand_flk()
+                    if hand_controller.hand_flk >= 2:
+                        hand_controller.initiate_and_increase()
 
                 else:
-                    hand_flk += 1
-                    if hand_flk == 7:
+                    hand_controller.increase_hand_flk()
+                    if hand_controller.hand_flk == 7:
                         if ring_num == 15:
                             snd_lose.play()
 
@@ -204,7 +197,7 @@ def main():
                         else:
                             snd_win.play()
 
-                    if hand_flk > 23:
+                    if hand_controller.hand_flk > 23:
                         if ring_num == 15:
                             mode = params["mode"]["idle"]
                         elif ring_num == 14:
@@ -217,7 +210,7 @@ def main():
 
                     ring_on(ring_num)
 
-                hand_play(cur_hand)
+                hand_play(hand_controller.current_hand)
 
             elif mode == params["mode"]["draw_prize"]:
                 # choose the number of coins for winner.
@@ -227,15 +220,15 @@ def main():
                 if time_del == 59:
                     get_coin, tg_ring = WinnerCalculator.get_winner_coin()
 
-                SURFACE.blit(bgimg, (0, 0))
+                SURFACE.blit(bgimg, image_loader.background_loc)
                 num_print(all_coin * 100, 0)
                 num_print(coin * 100, 1)
                 start_btn(0)
-                hand_play(cur_hand)
+                hand_play(hand_controller.current_hand)
 
-                hand_flk += 1
-                if hand_flk > 2:
-                    hand_flk = 0
+                hand_controller.increase_hand_flk()
+                if hand_controller.hand_flk > 2:
+                    hand_controller.initiate_hand_flk()
                     win_led = not win_led
                     ring_num += 1
 
@@ -258,7 +251,7 @@ def main():
 
             elif mode == params["mode"]["give_prize"]:
                 # give the player coins.
-                SURFACE.blit(bgimg, (0, 0))
+                SURFACE.blit(bgimg, image_loader.background_loc)
 
                 time_del += 1
                 if time_del == 4 and get_coin > coin_cnt:
@@ -277,7 +270,7 @@ def main():
                 num_print(all_coin * 100, 0)
                 num_print(coin * 100, 1)
                 start_btn(0)
-                hand_play(cur_hand)
+                hand_play(hand_controller.current_hand)
                 ring_on(win_led + 12)
                 ring_on(ring_num)
                 play_btn(4)
@@ -289,16 +282,16 @@ def main():
                 # exit/reset
                 exit_press = 1
                 if mode == params["mode"]["idle"] and coin == 0:
-                    reset_btn(0)
+                    reset_exit_btn(0, 'reset')
 
                 else:
-                    exit_btn(0)
+                    reset_exit_btn(0, 'exit')
 
             else:
                 if exit_press:
                     if mode == params["mode"]["idle"] and coin == 0:
                         exit_press = 0
-                        coin = 20
+                        coin = params["initial_coins"]
                         all_coin = 0
 
                     else:
@@ -307,10 +300,10 @@ def main():
 
                 else:
                     if mode == params["mode"]["idle"] and coin == 0:
-                        reset_btn(1)
+                        reset_exit_btn(1, 'reset')
 
                     else:
-                        exit_btn(1)
+                        reset_exit_btn(1, 'exit')
 
         pygame.display.flip()
         FPSL.tick(params["fps"])
