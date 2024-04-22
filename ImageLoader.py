@@ -6,6 +6,16 @@ class ImageLoader:
         self.image_root_path = "imgs/"
         self.logo_loc = (163, 145)
         self.background_loc = (0, 0)
+        self.logo = self.load_logo()
+        self.start_btn_img = self.load_start_btn()
+        self.ring_img = self.load_roulette()
+        self.exit_btn_img = self.load_exit_btn()
+        self.play_btn_img = self.load_play_btn()
+        self.num_img = self.load_coin_banner_numbers()
+        self.bgimg = self.load_background()
+        self.himg = self.load_hands()
+        self.coin_img = self.load_coins()
+        self.reset_btn_img = self.load_reset_btn()
 
     def load_logo(self):
         path = self.image_root_path + "logo.png"

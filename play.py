@@ -15,30 +15,9 @@ pygame.init()
 SURFACE = pygame.display.set_mode((params["display_width"], params["display_height"]), pygame.FULLSCREEN)
 FPSL = pygame.time.Clock()
 
-# Load images
+# Load images and sounds
 image_loader = ImageLoader()
-logo = image_loader.load_logo()
-start_btn_img = image_loader.load_start_btn()
-ring_img = image_loader.load_roulette()
-exit_btn_img = image_loader.load_exit_btn()
-play_btn_img = image_loader.load_play_btn()
-num_img = image_loader.load_coin_banner_numbers()
-bgimg = image_loader.load_background()
-himg = image_loader.load_hands()
-coin_img = image_loader.load_coins()
-reset_btn_img = image_loader.load_reset_btn()
-
-# Load sounds
 sound_loader = SoundLoader()
-snd_jk = sound_loader.load_jjamggam()
-snd_insert = sound_loader.load_insert_coin()
-snd_bb = sound_loader.load_bbo()
-snd_win = sound_loader.load_win()
-snd_lose = sound_loader.load_lose()
-snd_draw = sound_loader.load_draw()
-snd_rule = sound_loader.load_spinning_roulette()
-snd_yap = sound_loader.load_yappi()
-snd_get_coin = sound_loader.load_get_coin()
 
 
 def num_print(num, loc):
@@ -47,20 +26,20 @@ def num_print(num, loc):
 
     for i in range(0, 7):
         if num > tem:
-            SURFACE.blit(num_img[num // (tem + 1)], (i * 23 + 466, loc * 91 + 93))
+            SURFACE.blit(image_loader.num_img[num // (tem + 1)], (i * 23 + 466, loc * 91 + 93))
             num = num % (tem + 1)
         else:
-            SURFACE.blit(num_img[0], (i * 23 + 466, loc * 91 + 93))
+            SURFACE.blit(image_loader.num_img[0], (i * 23 + 466, loc * 91 + 93))
 
         tem = tem // 10
 
 
 def start_btn(psh):
-    SURFACE.blit(start_btn_img[psh], (479, psh * 3 + 232))
+    SURFACE.blit(image_loader.start_btn_img[psh], (479, psh * 3 + 232))
 
 
 def hand_play(num):
-    SURFACE.blit(himg, (141, 168), Rect(num * 195, 0, 195, 195))
+    SURFACE.blit(image_loader.himg, (141, 168), Rect(num * 195, 0, 195, 195))
 
 
 def reset_exit_btn(psh, btn_type):
@@ -69,7 +48,7 @@ def reset_exit_btn(psh, btn_type):
     :param btn_type: "reset" or "exit"
     :return:
     """
-    btn_img = reset_btn_img if btn_type == 'reset' else exit_btn_img
+    btn_img = image_loader.reset_btn_img if btn_type == 'reset' else image_loader.exit_btn_img
 
     if psh:
         SURFACE.blit(btn_img, (11, 55))
@@ -78,15 +57,15 @@ def reset_exit_btn(psh, btn_type):
 
 
 def ring_on(num):
-    SURFACE.blit(ring_img[num], (params["ring_x"][num], params["ring_y"][num]))
+    SURFACE.blit(image_loader.ring_img[num], (params["ring_x"][num], params["ring_y"][num]))
 
 
 def play_btn(num):
     for i in range(0, 3):
         if i == num:
-            SURFACE.blit(play_btn_img[i * 2 + 1], (i * 148 + 53, 437))
+            SURFACE.blit(image_loader.play_btn_img[i * 2 + 1], (i * 148 + 53, 437))
         else:
-            SURFACE.blit(play_btn_img[i * 2], (i * 148 + 53, 431))
+            SURFACE.blit(image_loader.play_btn_img[i * 2], (i * 148 + 53, 431))
 
 
 def main():
@@ -122,7 +101,7 @@ def main():
         if mode == params["mode"]["intro"]:
             # intro
             SURFACE.fill((0, 0, 0))
-            SURFACE.blit(logo, image_loader.logo_loc)
+            SURFACE.blit(image_loader.logo, image_loader.logo_loc)
 
             initial_time += 1
             if initial_time > params["max_initial_time"]:
@@ -131,7 +110,7 @@ def main():
         else:
             if mode == params["mode"]["idle"]:
                 # idle
-                SURFACE.blit(bgimg, image_loader.background_loc)
+                SURFACE.blit(image_loader.bgimg, image_loader.background_loc)
 
                 hand_controller.increase_hand_flk()
                 if hand_controller.hand_flk >= params["fps"] * 1:
@@ -144,34 +123,34 @@ def main():
 
                 if click_loc == 3 and coin_controller.current_coins > 0:
                     if not coin_controller.coin_pressed:
-                        snd_insert.play()
+                        sound_loader.snd_insert.play()
                     coin_controller.coin_inserted()
                     start_btn(1)
                 else:
                     if coin_controller.coin_pressed:
                         coin_controller.use_coin()
                         can_play = 1
-                        snd_jk.play()
+                        sound_loader.snd_jk.play()
                         mode = params["mode"]["play"]
 
                     start_btn(0)
 
             elif mode == params["mode"]["play"]:
                 # play
-                SURFACE.blit(bgimg, image_loader.background_loc)
+                SURFACE.blit(image_loader.bgimg, image_loader.background_loc)
                 num_print(coin_controller.cumulative_coins * 100, 0)
                 num_print(coin_controller.current_coins * 100, 1)
                 start_btn(0)
 
                 if click_loc < 3:
-                    snd_jk.stop()
-                    snd_draw.stop()
+                    sound_loader.snd_jk.stop()
+                    sound_loader.snd_draw.stop()
 
                     play_btn(click_loc)
                     if can_play:
                         can_play = 0
                         hand_controller.initiate_hand_flk()
-                        snd_bb.play()
+                        sound_loader.snd_bb.play()
 
                         hand_controller.current_hand, ring_num = WinnerCalculator.get_winner(click_loc)
 
@@ -187,13 +166,13 @@ def main():
                     hand_controller.increase_hand_flk()
                     if hand_controller.hand_flk == 7:
                         if ring_num == 15:
-                            snd_lose.play()
+                            sound_loader.snd_lose.play()
 
                         elif ring_num == 14:
-                            snd_draw.play()
+                            sound_loader.snd_draw.play()
 
                         else:
-                            snd_win.play()
+                            sound_loader.snd_win.play()
 
                     if hand_controller.hand_flk > 23:
                         if ring_num == 15:
@@ -202,7 +181,7 @@ def main():
                             can_play = 1
                         else:
                             mode = params["mode"]["draw_prize"]
-                            snd_rule.play(loops=-1)
+                            sound_loader.snd_rule.play(loops=-1)
                             ring_num = 0
                             time_del = 0
 
@@ -218,7 +197,7 @@ def main():
                 if time_del == 59:
                     get_coin, tg_ring = WinnerCalculator.get_winner_coin()
 
-                SURFACE.blit(bgimg, image_loader.background_loc)
+                SURFACE.blit(image_loader.bgimg, image_loader.background_loc)
                 num_print(coin_controller.cumulative_coins * 100, 0)
                 num_print(coin_controller.current_coins * 100, 1)
                 start_btn(0)
@@ -236,8 +215,8 @@ def main():
                 ring_on(win_led + 12)
                 ring_on(ring_num)
                 if ring_num == tg_ring and time_del == 60:
-                    snd_rule.stop()
-                    snd_yap.play()
+                    sound_loader.snd_rule.stop()
+                    sound_loader.snd_yap.play()
                     time_del = -20
                     coin_cnt = 0
                     mode = params["mode"]["give_prize"]
@@ -249,7 +228,7 @@ def main():
 
             elif mode == params["mode"]["give_prize"]:
                 # give the player coins.
-                SURFACE.blit(bgimg, image_loader.background_loc)
+                SURFACE.blit(image_loader.bgimg, image_loader.background_loc)
 
                 time_del += 1
                 if time_del == 4 and get_coin > coin_cnt:
@@ -257,10 +236,10 @@ def main():
                     coin_controller.generate_coins_image(coin_cnt)
                     coin_controller.increase_coins()
                     coin_cnt += 1
-                    snd_get_coin.play()
+                    sound_loader.snd_get_coin.play()
 
                 for i in range(0, coin_cnt):
-                    SURFACE.blit(coin_img[coin_controller.coin_i[i]],
+                    SURFACE.blit(image_loader.coin_img[coin_controller.coin_i[i]],
                                  (coin_controller.coin_x[i], coin_controller.coin_y[i]))
 
                 num_print(coin_controller.cumulative_coins * 100, 0)
