@@ -4,6 +4,7 @@ params = {
     "fps": 30,
     "initial_coins": 20,
     "initial_mode": 0,
+    "initial_click_location": 9,
     "mode": {
         "intro": 0,
         "idle": 1,

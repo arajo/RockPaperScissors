@@ -30,8 +30,7 @@ def main():
 
     while True:
 
-        key_insert_receptor = KeyInsertReceptor()
-        click_loc = key_insert_receptor.initial_loc
+        key_insert_receptor = KeyInsertReceptor(params)
 
         for event in pygame.event.get():
 
@@ -40,11 +39,11 @@ def main():
 
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    click_loc = key_insert_receptor.get_mouse_click_loc()
+                    key_insert_receptor.get_mouse_click_loc()
 
-            if click_loc == key_insert_receptor.initial_loc:
+            if key_insert_receptor.current_loc == key_insert_receptor.initial_loc:
                 if event.type == KEYDOWN:
-                    click_loc = key_insert_receptor.get_key_loc(event.key)
+                    key_insert_receptor.get_key_loc(event.key)
 
         if mode == params["mode"]["intro"]:
             # intro
@@ -64,11 +63,10 @@ def main():
                     hand_controller.initiate_and_increase()
 
                 display.hand_play(hand_controller.current_hand)
-                display.num_print(coin_controller.cumulative_coins * 100, 0)
-                display.num_print(coin_controller.current_coins * 100, 1)
+                display.print_numbers(coin_controller)
                 display.play_btn(4)
 
-                if click_loc == 3 and coin_controller.current_coins > 0:
+                if key_insert_receptor.current_loc == 3 and coin_controller.current_coins > 0:
                     if not coin_controller.coin_pressed:
                         sound_loader.snd_insert.play()
                     coin_controller.coin_inserted()
@@ -85,21 +83,21 @@ def main():
             elif mode == params["mode"]["play"]:
                 # play
                 display.background_page()
-                display.num_print(coin_controller.cumulative_coins * 100, 0)
-                display.num_print(coin_controller.current_coins * 100, 1)
+                display.print_numbers(coin_controller)
                 display.start_btn(0)
 
-                if click_loc < 3:
+                if key_insert_receptor.current_loc < 3:
                     sound_loader.snd_jk.stop()
                     sound_loader.snd_draw.stop()
 
-                    display.play_btn(click_loc)
+                    display.play_btn(key_insert_receptor.current_loc)
                     if can_play:
                         can_play = 0
                         hand_controller.initiate_hand_flk()
                         sound_loader.snd_bb.play()
 
-                        hand_controller.current_hand, ring_num = WinnerCalculator.get_winner(click_loc)
+                        hand_controller.current_hand, ring_num = WinnerCalculator.get_winner(
+                            key_insert_receptor.current_loc)
 
                 else:
                     display.play_btn(4)
@@ -145,8 +143,7 @@ def main():
                     get_coin, tg_ring = WinnerCalculator.get_winner_coin()
 
                 display.background_page()
-                display.num_print(coin_controller.cumulative_coins * 100, 0)
-                display.num_print(coin_controller.current_coins * 100, 1)
+                display.print_numbers(coin_controller)
                 display.start_btn(0)
                 display.hand_play(hand_controller.current_hand)
 
@@ -168,8 +165,8 @@ def main():
                     coin_cnt = 0
                     mode = params["mode"]["give_prize"]
 
-                if click_loc < 3:
-                    display.play_btn(click_loc)
+                if key_insert_receptor.current_loc < 3:
+                    display.play_btn(key_insert_receptor.current_loc)
                 else:
                     display.play_btn(4)
 
@@ -188,8 +185,7 @@ def main():
                 for i in range(0, coin_cnt):
                     display.give_coins(coin_controller, i)
 
-                display.num_print(coin_controller.cumulative_coins * 100, 0)
-                display.num_print(coin_controller.current_coins * 100, 1)
+                display.print_numbers(coin_controller)
                 display.start_btn(0)
                 display.hand_play(hand_controller.current_hand)
                 display.ring_on(win_led + 12)
@@ -199,7 +195,7 @@ def main():
                 if time_del == 30:
                     mode = params["mode"]["idle"]
 
-            if click_loc == 4:
+            if key_insert_receptor.current_loc == 4:
                 # exit/reset
                 exit_press = 1
                 if mode == params["mode"]["idle"] and coin_controller.current_coins == 0:
