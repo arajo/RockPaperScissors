@@ -2,7 +2,7 @@ params = {
     "display_width": 640,
     "display_height": 480,
     "fps": 30,
-    "initial_coins": 20,
+    "initial_coins": 10,
     "initial_mode": 0,
     "initial_click_location": 9,
     "mode": {

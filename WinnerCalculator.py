@@ -2,6 +2,40 @@ from random import randint
 
 
 class WinnerCalculator:
+    def __init__(self, ):
+        self.initial_ring_num = 0
+        self.user_win = 12
+        self.draw = 14
+        self.user_lose = 15
+        self.total_ring_num = 11
+        self.ring_num = self.initial_ring_num
+
+    def increase_ring_num(self):
+        self.ring_num += 1
+
+    def get_winner(self, click_loc):
+        res = randint(0, 50)
+        if res < 8:
+            # user win
+            self.ring_num = self.user_win
+            cur_hand = click_loc - 1
+
+            if cur_hand < 0:
+                cur_hand = 2
+
+        elif res < 30:
+            # draw
+            self.ring_num = self.draw
+            cur_hand = click_loc
+
+        else:
+            # user lose
+            self.ring_num = self.user_lose
+            cur_hand = click_loc + 1
+            if cur_hand > 2:
+                cur_hand = 0
+        return cur_hand
+
     @staticmethod
     def get_winner_coin():
         """
@@ -33,27 +67,3 @@ class WinnerCalculator:
         else:
             get_coin, tg_ring = 2, 11
         return get_coin, tg_ring
-
-    @staticmethod
-    def get_winner(click_loc):
-        res = randint(0, 50)
-        if res < 8:
-            # user win
-            ring_num = 12
-            cur_hand = click_loc - 1
-
-            if cur_hand < 0:
-                cur_hand = 2
-
-        elif res < 30:
-            # draw
-            ring_num = 14
-            cur_hand = click_loc
-
-        else:
-            # user lose
-            ring_num = 15
-            cur_hand = click_loc + 1
-            if cur_hand > 2:
-                cur_hand = 0
-        return cur_hand, ring_num

@@ -21,13 +21,13 @@ class Display(ImageLoader):
             else:
                 self.SURFACE.blit(self.play_btn_img[i * 2], (i * 148 + 53, 431))
 
-    def reset_exit_btn(self, psh, btn_type):
+    def reset_exit_btn(self, psh: bool, btn_type: int):
         """
-        :param psh: 0 or 1
-        :param btn_type: "reset" or "exit"
+        :param psh: False or True
+        :param btn_type: "reset: 0" or "exit: 1"
         :return:
         """
-        btn_img = self.reset_btn_img if btn_type == 'reset' else self.exit_btn_img
+        btn_img = self.exit_btn_img if btn_type else self.reset_btn_img
 
         if psh:
             self.SURFACE.blit(btn_img, (11, 55))

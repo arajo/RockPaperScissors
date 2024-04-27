@@ -1,6 +1,5 @@
 import sys
 import pygame
-from pygame.locals import QUIT, MOUSEBUTTONDOWN, KEYDOWN
 
 from CoinController import CoinController
 from Display import Display
@@ -22,53 +21,38 @@ def main():
     Initialize Params
     """
     get_coin, coin_cnt = 0, 0
+    initiate_time, time_del = 0, 0
+    win_led, tg_ring = 0, 0
     coin_controller = CoinController(params)
-    exit_press, win_led, tg_ring = 0, 0, 0
+    exit_pressed, fps = False, params["fps"]
 
-    mode = params["mode"]["intro"]
-    initiate_time, ring_num, time_del = 0, 0, 0
     hand_controller = HandController()
-    state_controller = StateController()
+    state_controller = StateController(params["mode"])
+    winner_calculator = WinnerCalculator()
 
     while True:
-
         key_insert_receptor = KeyInsertReceptor(params)
-
         for event in pygame.event.get():
+            key_insert_receptor.check_event(event)
 
-            if event.type == QUIT:
-                key_insert_receptor.exit()
-
-            if event.type == MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    key_insert_receptor.get_mouse_click_loc()
-
-            if key_insert_receptor.current_loc == key_insert_receptor.initial_loc:
-                if event.type == KEYDOWN:
-                    key_insert_receptor.get_key_loc(event.key)
-
-        if mode == params["mode"]["intro"]:
+        if state_controller.mode == state_controller.intro_mode:
             # intro
             display.intro_page()
 
             initiate_time += 1
             if initiate_time > params["max_initial_time"]:
-                mode = params["mode"]["idle"]
+                state_controller.idle_state()
 
         else:
-            if mode == params["mode"]["idle"]:
+            if state_controller.mode == state_controller.idle_mode:
                 # idle
                 display.idle_page()
-
-                hand_controller.increase_hand_flk()
-                if hand_controller.hand_flk >= params["fps"] * 1:
-                    hand_controller.initiate_and_increase()
-
+                hand_controller.idle_hand_flk(fps)
                 display.hand_play(hand_controller.current_hand)
                 display.print_numbers(coin_controller)
                 display.play_btn(4)
 
-                if key_insert_receptor.current_loc == 3 and coin_controller.current_coins > 0:
+                if key_insert_receptor.current_loc == key_insert_receptor.return_loc and coin_controller.current_coins > 0:
                     if not coin_controller.coin_pressed:
                         sound_loader.snd_insert.play()
                     coin_controller.coin_inserted()
@@ -78,66 +62,62 @@ def main():
                         coin_controller.use_coin()
                         state_controller.coin_inserted()
                         sound_loader.snd_jk.play()
-                        mode = params["mode"]["play"]
+                        state_controller.play_state()
 
                     display.start_btn(0)
 
-            elif mode == params["mode"]["play"]:
+            elif state_controller.mode == state_controller.play_mode:
                 # play
                 display.background_page()
                 display.print_numbers(coin_controller)
                 display.start_btn(0)
 
-                if key_insert_receptor.current_loc < 3:
+                if key_insert_receptor.current_loc < key_insert_receptor.return_loc:
                     # User play key-in
                     sound_loader.snd_jk.stop()
                     sound_loader.snd_draw.stop()
-
                     display.play_btn(key_insert_receptor.current_loc)
+
                     if state_controller.can_play:
                         state_controller.coin_used()
                         hand_controller.initiate_hand_flk()
                         sound_loader.snd_bb.play()
-
-                        hand_controller.current_hand, ring_num = WinnerCalculator.get_winner(
-                            key_insert_receptor.current_loc)
+                        hand_controller.current_hand = winner_calculator.get_winner(key_insert_receptor.current_loc)
 
                 else:
                     display.play_btn(4)
 
                 if state_controller.can_play:
                     hand_controller.increase_hand_flk()
-                    if hand_controller.hand_flk >= 2:
+                    if hand_controller.hand_flk >= hand_controller.max_idle_hand_flk:
                         hand_controller.initiate_and_increase()
 
                 else:
                     hand_controller.increase_hand_flk()
-                    if hand_controller.hand_flk == 7:
-                        if ring_num == 15:
+                    if hand_controller.hand_flk == hand_controller.sound_hand_flk:
+                        if winner_calculator.ring_num == winner_calculator.user_lose:
                             sound_loader.snd_lose.play()
-
-                        elif ring_num == 14:
+                        elif winner_calculator.ring_num == winner_calculator.draw:
                             sound_loader.snd_draw.play()
-
                         else:
                             sound_loader.snd_win.play()
 
-                    if hand_controller.hand_flk > 23:
-                        if ring_num == 15:
-                            mode = params["mode"]["idle"]
-                        elif ring_num == 14:
+                    if hand_controller.hand_flk > hand_controller.result_hand_flk:
+                        if winner_calculator.ring_num == winner_calculator.user_lose:
+                            state_controller.idle_state()
+                        elif winner_calculator.ring_num == winner_calculator.draw:
                             state_controller.coin_inserted()
                         else:
-                            mode = params["mode"]["draw_prize"]
+                            state_controller.draw_prize_state()
                             sound_loader.snd_rule.play(loops=-1)
-                            ring_num = 0
+                            winner_calculator.__init__()
                             time_del = 0
 
-                    display.ring_on(ring_num)
+                    display.ring_on(winner_calculator.ring_num)
 
                 display.hand_play(hand_controller.current_hand)
 
-            elif mode == params["mode"]["draw_prize"]:
+            elif state_controller.mode == state_controller.draw_prize_mode:
                 # choose the number of coins for winner.
                 if time_del < 60:
                     time_del += 1
@@ -151,29 +131,29 @@ def main():
                 display.hand_play(hand_controller.current_hand)
 
                 hand_controller.increase_hand_flk()
-                if hand_controller.hand_flk > 2:
+                if hand_controller.hand_flk > hand_controller.max_idle_hand_flk:
                     hand_controller.initiate_hand_flk()
                     win_led = not win_led
-                    ring_num += 1
+                    winner_calculator.increase_ring_num()
 
-                    if ring_num > 11:
-                        ring_num = 0
+                    if winner_calculator.ring_num > winner_calculator.total_ring_num:
+                        winner_calculator.__init__()
 
                 display.ring_on(win_led + 12)
-                display.ring_on(ring_num)
-                if ring_num == tg_ring and time_del == 60:
+                display.ring_on(winner_calculator.ring_num)
+                if winner_calculator.ring_num == tg_ring and time_del == 60:
                     sound_loader.snd_rule.stop()
                     sound_loader.snd_yap.play()
                     time_del = -20
                     coin_cnt = 0
-                    mode = params["mode"]["give_prize"]
+                    state_controller.give_prize_state()
 
-                if key_insert_receptor.current_loc < 3:
+                if key_insert_receptor.current_loc < key_insert_receptor.return_loc:
                     display.play_btn(key_insert_receptor.current_loc)
                 else:
                     display.play_btn(4)
 
-            elif mode == params["mode"]["give_prize"]:
+            elif state_controller.mode == state_controller.give_prize_mode:
                 # give the player coins.
                 display.background_page()
 
@@ -192,25 +172,24 @@ def main():
                 display.start_btn(0)
                 display.hand_play(hand_controller.current_hand)
                 display.ring_on(win_led + 12)
-                display.ring_on(ring_num)
+                display.ring_on(winner_calculator.ring_num)
                 display.play_btn(4)
 
                 if time_del == 30:
-                    mode = params["mode"]["idle"]
+                    state_controller.idle_state()
 
-            if key_insert_receptor.current_loc == 4:
+            if key_insert_receptor.current_loc == key_insert_receptor.escape_loc:
                 # exit/reset
-                exit_press = 1
-                if mode == params["mode"]["idle"] and coin_controller.current_coins == 0:
-                    display.reset_exit_btn(0, 'reset')
-
+                exit_pressed = True
+                if state_controller.mode == state_controller.idle_mode and coin_controller.current_coins == 0:
+                    display.reset_exit_btn(False, 0)
                 else:
-                    display.reset_exit_btn(0, 'exit')
+                    display.reset_exit_btn(False, 1)
 
             else:
-                if exit_press:
-                    if mode == params["mode"]["idle"] and coin_controller.current_coins == 0:
-                        exit_press = 0
+                if exit_pressed:
+                    if state_controller.mode == state_controller.idle_mode and coin_controller.current_coins == 0:
+                        exit_pressed = False
                         coin_controller.__init__(params)
 
                     else:
@@ -218,14 +197,13 @@ def main():
                         sys.exit()
 
                 else:
-                    if mode == params["mode"]["idle"] and coin_controller.current_coins == 0:
-                        display.reset_exit_btn(1, 'reset')
-
+                    if state_controller.mode == state_controller.idle_mode and coin_controller.current_coins == 0:
+                        display.reset_exit_btn(True, 0)
                     else:
-                        display.reset_exit_btn(1, 'exit')
+                        display.reset_exit_btn(True, 1)
 
         pygame.display.flip()
-        FPSL.tick(params["fps"])
+        FPSL.tick(fps)
 
 
 if __name__ == '__main__':
