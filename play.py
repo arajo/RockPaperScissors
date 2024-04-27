@@ -8,6 +8,7 @@ from HandController import HandController
 from KeyInsertReceptor import KeyInsertReceptor
 from Params import params
 from SoundLoader import SoundLoader
+from StateController import StateController
 from WinnerCalculator import WinnerCalculator
 
 pygame.init()
@@ -25,8 +26,9 @@ def main():
     exit_press, win_led, tg_ring = 0, 0, 0
 
     mode = params["mode"]["intro"]
-    can_play, initial_time, ring_num, time_del = 0, 0, 0, 0
+    initiate_time, ring_num, time_del = 0, 0, 0
     hand_controller = HandController()
+    state_controller = StateController()
 
     while True:
 
@@ -49,8 +51,8 @@ def main():
             # intro
             display.intro_page()
 
-            initial_time += 1
-            if initial_time > params["max_initial_time"]:
+            initiate_time += 1
+            if initiate_time > params["max_initial_time"]:
                 mode = params["mode"]["idle"]
 
         else:
@@ -74,7 +76,7 @@ def main():
                 else:
                     if coin_controller.coin_pressed:
                         coin_controller.use_coin()
-                        can_play = 1
+                        state_controller.coin_inserted()
                         sound_loader.snd_jk.play()
                         mode = params["mode"]["play"]
 
@@ -87,12 +89,13 @@ def main():
                 display.start_btn(0)
 
                 if key_insert_receptor.current_loc < 3:
+                    # User play key-in
                     sound_loader.snd_jk.stop()
                     sound_loader.snd_draw.stop()
 
                     display.play_btn(key_insert_receptor.current_loc)
-                    if can_play:
-                        can_play = 0
+                    if state_controller.can_play:
+                        state_controller.coin_used()
                         hand_controller.initiate_hand_flk()
                         sound_loader.snd_bb.play()
 
@@ -102,7 +105,7 @@ def main():
                 else:
                     display.play_btn(4)
 
-                if can_play:
+                if state_controller.can_play:
                     hand_controller.increase_hand_flk()
                     if hand_controller.hand_flk >= 2:
                         hand_controller.initiate_and_increase()
@@ -123,7 +126,7 @@ def main():
                         if ring_num == 15:
                             mode = params["mode"]["idle"]
                         elif ring_num == 14:
-                            can_play = 1
+                            state_controller.coin_inserted()
                         else:
                             mode = params["mode"]["draw_prize"]
                             sound_loader.snd_rule.play(loops=-1)
