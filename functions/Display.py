@@ -2,12 +2,15 @@ import pygame
 from pygame.locals import Rect
 
 from functions.Loader.ImageLoader import ImageLoader
+from functions.Loader.SoundLoader import SoundLoader
 
 
-class Display(ImageLoader):
+class Display(ImageLoader, SoundLoader):
     def __init__(self, params):
         self.SURFACE = pygame.display.set_mode((params["display_width"], params["display_height"]), pygame.FULLSCREEN)
-        super().__init__()
+        ImageLoader.__init__(self)
+        SoundLoader.__init__(self)
+
         self.ring_x = params["ring_x"]
         self.ring_y = params["ring_y"]
 

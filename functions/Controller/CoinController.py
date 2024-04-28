@@ -9,6 +9,8 @@ class CoinController:
         self.coin_x = params["coin_x"]
         self.coin_y = params["coin_y"]
         self.coin_i = params["coin_i"]
+        self.coin_cnt = 0
+        self.get_coin = 0
 
     def use_coin(self):
         self.coin_pressed = False
@@ -20,6 +22,12 @@ class CoinController:
 
     def increase_coins(self):
         self.current_coins += 1
+
+    def reset_coin_cnt(self):
+        self.coin_cnt = 0
+
+    def increase_coin_cnt(self):
+        self.coin_cnt += 1
 
     def generate_coins_image(self, coin_cnt):
         self.coin_x[coin_cnt] = randint(475, 565)

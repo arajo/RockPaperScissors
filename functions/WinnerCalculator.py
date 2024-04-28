@@ -37,7 +37,7 @@ class WinnerCalculator:
         return cur_hand
 
     @staticmethod
-    def get_winner_coin():
+    def get_winner_coin(coin_controller):
         """
         우승시 획득 코인 랜덤 선정
         """
@@ -66,4 +66,6 @@ class WinnerCalculator:
             get_coin, tg_ring = 7, 10
         else:
             get_coin, tg_ring = 2, 11
-        return get_coin, tg_ring
+
+        coin_controller.get_coin = get_coin
+        return tg_ring
