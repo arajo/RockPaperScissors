@@ -15,7 +15,6 @@ from functions.WinnerCalculator import WinnerCalculator
 
 pygame.init()
 FPSL = pygame.time.Clock()
-display = Display(params)
 
 
 def main():
@@ -27,6 +26,7 @@ def main():
     coin_controller = CoinController(params)
     hand_controller, winner_calculator, time_controller = HandController(), WinnerCalculator(), TimeController()
     state_controller = StateController(params["mode"])
+    display = Display(params)
     intro = Intro(display, state_controller, params["max_initial_time"])
     idle = Idle(display, state_controller, hand_controller, fps)
     play = Play(display, state_controller, hand_controller)
@@ -49,11 +49,11 @@ def main():
 
             elif state_controller.mode == state_controller.draw_prize_mode:
                 # choose the number of coins for winner.
-                spinner.select(time_controller, coin_controller, winner_calculator, key_insert_receptor)
+                spinner.spin_and_select(time_controller, coin_controller, winner_calculator, key_insert_receptor)
 
             elif state_controller.mode == state_controller.give_prize_mode:
                 # give the player coins.
-                spinner.give(time_controller, coin_controller, winner_calculator)
+                spinner.result(time_controller, coin_controller, winner_calculator)
 
             # exit/reset
             if exit_pressed:

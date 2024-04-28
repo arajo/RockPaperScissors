@@ -6,11 +6,7 @@ class Idle:
         self.hand_controller = hand_controller
 
     def action(self, coin_controller, key_insert_receptor):
-        self.display.idle_page()
-        self.hand_controller.idle_hand_flk(self.fps)
-        self.display.hand_play(self.hand_controller.current_hand)
-        self.display.print_numbers(coin_controller)
-        self.display.play_btn(4)
+        self.initial_display(coin_controller)
 
         if key_insert_receptor.current_loc == key_insert_receptor.return_loc and coin_controller.current_coins > 0:
             if not coin_controller.coin_pressed:
@@ -25,3 +21,10 @@ class Idle:
                 self.state_controller.play_state()
 
             self.display.start_btn(0)
+
+    def initial_display(self, coin_controller):
+        self.display.idle_page()
+        self.hand_controller.idle_hand_flk(self.fps)
+        self.display.hand_play(self.hand_controller.roulette_hand)
+        self.display.print_numbers(coin_controller)
+        self.display.play_btn(4)

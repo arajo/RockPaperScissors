@@ -1,7 +1,7 @@
 class HandController:
     def __init__(self):
         self.hand_flk = 0
-        self.current_hand = 0
+        self.roulette_hand = 0
         self.max_idle_hand_flk = 2
         self.sound_hand_flk = 7
         self.result_hand_flk = 23
@@ -13,9 +13,9 @@ class HandController:
         self.hand_flk = 0
 
     def increase_current_hand(self):
-        self.current_hand += 1
-        if self.current_hand > 2:
-            self.current_hand = 0
+        self.roulette_hand += 1
+        if self.roulette_hand > 2:
+            self.roulette_hand = 0
 
     def initiate_and_increase(self):
         self.initiate_hand_flk()

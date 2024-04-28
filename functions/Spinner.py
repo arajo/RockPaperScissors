@@ -6,17 +6,14 @@ class Spinner:
         self.state_controller = state_controller
         self.hand_controller = hand_controller
 
-    def select(self, time_controller, coin_controller, winner_calculator, key_insert_receptor):
+    def spin_and_select(self, time_controller, coin_controller, winner_calculator, key_insert_receptor):
         if time_controller.time_del < time_controller.draw_prize_time:
             time_controller.increase_time()
 
         if time_controller.time_del == time_controller.draw_prize_time - 1:
             self.tg_ring = winner_calculator.get_winner_coin(coin_controller)
 
-        self.display.background_page()
-        self.display.print_numbers(coin_controller)
-        self.display.start_btn(0)
-        self.display.hand_play(self.hand_controller.current_hand)
+        self.initial_display(coin_controller)
 
         self.hand_controller.increase_hand_flk()
         if self.hand_controller.hand_flk > self.hand_controller.max_idle_hand_flk:
@@ -41,7 +38,7 @@ class Spinner:
         else:
             self.display.play_btn(4)
 
-    def give(self, time_controller, coin_controller, winner_calculator):
+    def result(self, time_controller, coin_controller, winner_calculator):
         self.display.background_page()
 
         time_controller.increase_time()
@@ -55,12 +52,21 @@ class Spinner:
         for i in range(0, coin_controller.coin_cnt):
             self.display.give_coins(coin_controller, i)
 
-        self.display.print_numbers(coin_controller)
-        self.display.start_btn(0)
-        self.display.hand_play(self.hand_controller.current_hand)
-        self.display.ring_on(self.win_led + 12)
-        self.display.ring_on(winner_calculator.ring_num)
-        self.display.play_btn(4)
+        self.result_display(coin_controller, winner_calculator)
 
         if time_controller.time_del == 30:
             self.state_controller.idle_state()
+
+    def initial_display(self, coin_controller):
+        self.display.background_page()
+        self.display.print_numbers(coin_controller)
+        self.display.start_btn(0)
+        self.display.hand_play(self.hand_controller.roulette_hand)
+
+    def result_display(self, coin_controller, winner_calculator):
+        self.display.print_numbers(coin_controller)
+        self.display.start_btn(0)
+        self.display.hand_play(self.hand_controller.roulette_hand)
+        self.display.ring_on(self.win_led + 12)
+        self.display.ring_on(winner_calculator.ring_num)
+        self.display.play_btn(4)
