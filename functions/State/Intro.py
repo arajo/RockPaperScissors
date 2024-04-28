@@ -1,9 +1,9 @@
 class Intro:
-    def __init__(self, display, state_controller, max_initial_time):
+    def __init__(self, game_controller, state_controller, max_initial_time):
         self.initiate_time = 0
         self.max_initial_time = max_initial_time
-        self.display = display
         self.state_controller = state_controller
+        self.game_controller = game_controller
 
     def action(self):
         self.initial_display()
@@ -13,4 +13,4 @@ class Intro:
             self.state_controller.idle_state()
 
     def initial_display(self):
-        self.display.intro_page()
+        self.game_controller.display.intro_page()

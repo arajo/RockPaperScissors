@@ -1,17 +1,13 @@
 import pygame
 
 from Params import params
-from functions.Controller.CoinController import CoinController
-from functions.Controller.HandController import HandController
+from functions.Controller.GameController import GameController
 from functions.Controller.StateController import StateController
-from functions.Controller.TimeController import TimeController
-from functions.Display import Display
-from functions.Idle import Idle
-from functions.Intro import Intro
 from functions.KeyInsertReceptor import KeyInsertReceptor
-from functions.Play import Play
-from functions.Spinner import Spinner
-from functions.WinnerCalculator import WinnerCalculator
+from functions.State.Idle import Idle
+from functions.State.Intro import Intro
+from functions.State.Play import Play
+from functions.State.Spinner import Spinner
 
 pygame.init()
 FPSL = pygame.time.Clock()
@@ -23,14 +19,17 @@ def main():
     """
     exit_pressed, fps = False, params["fps"]
 
-    coin_controller = CoinController(params)
-    hand_controller, winner_calculator, time_controller = HandController(), WinnerCalculator(), TimeController()
     state_controller = StateController(params["mode"])
-    display = Display(params)
-    intro = Intro(display, state_controller, params["max_initial_time"])
-    idle = Idle(display, state_controller, hand_controller, fps)
-    play = Play(display, state_controller, hand_controller)
-    spinner = Spinner(display, state_controller, hand_controller)
+    game_controller = GameController(params)
+
+    intro = Intro(game_controller, state_controller, params["max_initial_time"])
+
+    game_controller.initiate_game()
+    idle = Idle(state_controller, game_controller, fps)
+
+    game_controller.play_start()
+    play = Play(state_controller, game_controller)
+    spinner = Spinner(state_controller, game_controller)
 
     while True:
         key_insert_receptor = KeyInsertReceptor(params)
@@ -42,34 +41,36 @@ def main():
 
         else:
             if state_controller.mode == state_controller.idle_mode:
-                idle.action(coin_controller, key_insert_receptor)
+                idle.action(key_insert_receptor)
 
             elif state_controller.mode == state_controller.play_mode:
-                play.action(coin_controller, key_insert_receptor, winner_calculator, time_controller)
+                play.action(key_insert_receptor)
 
             elif state_controller.mode == state_controller.draw_prize_mode:
                 # choose the number of coins for winner.
-                spinner.spin_and_select(time_controller, coin_controller, winner_calculator, key_insert_receptor)
+                spinner.spin_and_select(key_insert_receptor)
 
             elif state_controller.mode == state_controller.give_prize_mode:
                 # give the player coins.
-                spinner.result(time_controller, coin_controller, winner_calculator)
+                spinner.result()
 
             # exit/reset
             if exit_pressed:
-                if state_controller.mode == state_controller.idle_mode and coin_controller.current_coins == 0:
+                if state_controller.mode == state_controller.idle_mode and \
+                        game_controller.coin_controller.current_coins == 0:
                     exit_pressed = False
-                    coin_controller.__init__(params)
+                    game_controller.coin_controller.__init__(params)
                 else:
                     key_insert_receptor.exit()
 
             if key_insert_receptor.current_loc == key_insert_receptor.escape_loc:
                 exit_pressed = True
 
-            if state_controller.mode == state_controller.idle_mode and coin_controller.current_coins == 0:
-                display.reset_exit_btn(exit_pressed, 0)
+            if state_controller.mode == state_controller.idle_mode and \
+                    game_controller.coin_controller.current_coins == 0:
+                game_controller.display.reset_exit_btn(exit_pressed, 0)
             else:
-                display.reset_exit_btn(exit_pressed, 1)
+                game_controller.display.reset_exit_btn(exit_pressed, 1)
 
         pygame.display.flip()
         FPSL.tick(fps)
