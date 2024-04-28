@@ -30,9 +30,9 @@ class Display(ImageLoader):
         btn_img = self.exit_btn_img if btn_type else self.reset_btn_img
 
         if psh:
-            self.SURFACE.blit(btn_img, (11, 55))
-        else:
             self.SURFACE.blit(btn_img, (11, 59))
+        else:
+            self.SURFACE.blit(btn_img, (11, 55))
 
     def hand_play(self, num):
         self.SURFACE.blit(self.himg, (141, 168), Rect(num * 195, 0, 195, 195))

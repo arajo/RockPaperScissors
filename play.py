@@ -178,29 +178,21 @@ def main():
                 if time_del == 30:
                     state_controller.idle_state()
 
-            if key_insert_receptor.current_loc == key_insert_receptor.escape_loc:
-                # exit/reset
-                exit_pressed = True
+            # exit/reset
+            if exit_pressed:
                 if state_controller.mode == state_controller.idle_mode and coin_controller.current_coins == 0:
-                    display.reset_exit_btn(False, 0)
+                    exit_pressed = False
+                    coin_controller.__init__(params)
                 else:
-                    display.reset_exit_btn(False, 1)
+                    key_insert_receptor.exit()
 
+            if key_insert_receptor.current_loc == key_insert_receptor.escape_loc:
+                exit_pressed = True
+
+            if state_controller.mode == state_controller.idle_mode and coin_controller.current_coins == 0:
+                display.reset_exit_btn(exit_pressed, 0)
             else:
-                if exit_pressed:
-                    if state_controller.mode == state_controller.idle_mode and coin_controller.current_coins == 0:
-                        exit_pressed = False
-                        coin_controller.__init__(params)
-
-                    else:
-                        pygame.quit()
-                        sys.exit()
-
-                else:
-                    if state_controller.mode == state_controller.idle_mode and coin_controller.current_coins == 0:
-                        display.reset_exit_btn(True, 0)
-                    else:
-                        display.reset_exit_btn(True, 1)
+                display.reset_exit_btn(exit_pressed, 1)
 
         pygame.display.flip()
         FPSL.tick(fps)
