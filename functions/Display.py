@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import Rect
 
-from ImageLoader import ImageLoader
+from functions.Loader.ImageLoader import ImageLoader
 
 
 class Display(ImageLoader):

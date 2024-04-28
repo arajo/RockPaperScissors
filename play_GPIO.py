@@ -34,75 +34,75 @@ GPIO.setup(gpio_k5,GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
 
 
-start_btn_img=(pygame.image.load("imgs/btn_s0.png").convert_alpha(),
-               pygame.image.load("imgs/btn_s1.png").convert_alpha())
+start_btn_img=(pygame.image.load("data/imgs/btn_s0.png").convert_alpha(),
+               pygame.image.load("data/imgs/btn_s1.png").convert_alpha())
 
-ring_img=(pygame.image.load("imgs/L00.png").convert_alpha(),
-          pygame.image.load("imgs/L01.png").convert_alpha(),
-          pygame.image.load("imgs/L02.png").convert_alpha(),
-          pygame.image.load("imgs/L03.png").convert_alpha(),
-          pygame.image.load("imgs/L04.png").convert_alpha(),
-          pygame.image.load("imgs/L05.png").convert_alpha(),
-          pygame.image.load("imgs/L06.png").convert_alpha(),
-          pygame.image.load("imgs/L07.png").convert_alpha(),
-          pygame.image.load("imgs/L08.png").convert_alpha(),
-          pygame.image.load("imgs/L09.png").convert_alpha(),
-          pygame.image.load("imgs/L10.png").convert_alpha(),
-          pygame.image.load("imgs/L11.png").convert_alpha(),
-          pygame.image.load("imgs/LWL.png").convert_alpha(),
-          pygame.image.load("imgs/LWR.png").convert_alpha(),
-          pygame.image.load("imgs/LDR.png").convert_alpha(),
-          pygame.image.load("imgs/LLS.png").convert_alpha())
+ring_img=(pygame.image.load("data/imgs/L00.png").convert_alpha(),
+          pygame.image.load("data/imgs/L01.png").convert_alpha(),
+          pygame.image.load("data/imgs/L02.png").convert_alpha(),
+          pygame.image.load("data/imgs/L03.png").convert_alpha(),
+          pygame.image.load("data/imgs/L04.png").convert_alpha(),
+          pygame.image.load("data/imgs/L05.png").convert_alpha(),
+          pygame.image.load("data/imgs/L06.png").convert_alpha(),
+          pygame.image.load("data/imgs/L07.png").convert_alpha(),
+          pygame.image.load("data/imgs/L08.png").convert_alpha(),
+          pygame.image.load("data/imgs/L09.png").convert_alpha(),
+          pygame.image.load("data/imgs/L10.png").convert_alpha(),
+          pygame.image.load("data/imgs/L11.png").convert_alpha(),
+          pygame.image.load("data/imgs/LWL.png").convert_alpha(),
+          pygame.image.load("data/imgs/LWR.png").convert_alpha(),
+          pygame.image.load("data/imgs/LDR.png").convert_alpha(),
+          pygame.image.load("data/imgs/LLS.png").convert_alpha())
 
 
 ring_x=(191,260,314,331,293,239,167,104,68,64,71,118,16,330,290,19)
 ring_y=(89,100,149,234,304,348,357,326,280,213,142,100,63,77,283,277)
 
-exit_btn_img=pygame.image.load("imgs/btn_exit.png").convert_alpha()
+exit_btn_img=pygame.image.load("data/imgs/btn_exit.png").convert_alpha()
 
-play_btn_img=(pygame.image.load("imgs/btn_00.png").convert_alpha(),
-              pygame.image.load("imgs/btn_01.png").convert_alpha(),
-              pygame.image.load("imgs/btn_10.png").convert_alpha(),
-              pygame.image.load("imgs/btn_11.png").convert_alpha(),
-              pygame.image.load("imgs/btn_20.png").convert_alpha(),
-              pygame.image.load("imgs/btn_21.png").convert_alpha())
+play_btn_img=(pygame.image.load("data/imgs/btn_00.png").convert_alpha(),
+              pygame.image.load("data/imgs/btn_01.png").convert_alpha(),
+              pygame.image.load("data/imgs/btn_10.png").convert_alpha(),
+              pygame.image.load("data/imgs/btn_11.png").convert_alpha(),
+              pygame.image.load("data/imgs/btn_20.png").convert_alpha(),
+              pygame.image.load("data/imgs/btn_21.png").convert_alpha())
 
-num_img=(pygame.image.load("imgs/n0.png").convert_alpha(),
-         pygame.image.load("imgs/n1.png").convert_alpha(),
-         pygame.image.load("imgs/n2.png").convert_alpha(),
-         pygame.image.load("imgs/n3.png").convert_alpha(),
-         pygame.image.load("imgs/n4.png").convert_alpha(),
-         pygame.image.load("imgs/n5.png").convert_alpha(),
-         pygame.image.load("imgs/n6.png").convert_alpha(),
-         pygame.image.load("imgs/n7.png").convert_alpha(),
-         pygame.image.load("imgs/n8.png").convert_alpha(),
-         pygame.image.load("imgs/n9.png").convert_alpha())
+num_img=(pygame.image.load("data/imgs/n0.png").convert_alpha(),
+         pygame.image.load("data/imgs/n1.png").convert_alpha(),
+         pygame.image.load("data/imgs/n2.png").convert_alpha(),
+         pygame.image.load("data/imgs/n3.png").convert_alpha(),
+         pygame.image.load("data/imgs/n4.png").convert_alpha(),
+         pygame.image.load("data/imgs/n5.png").convert_alpha(),
+         pygame.image.load("data/imgs/n6.png").convert_alpha(),
+         pygame.image.load("data/imgs/n7.png").convert_alpha(),
+         pygame.image.load("data/imgs/n8.png").convert_alpha(),
+         pygame.image.load("data/imgs/n9.png").convert_alpha())
 
-bgimg=pygame.image.load("imgs/back_img.jpg").convert()
+bgimg=pygame.image.load("data/imgs/back_img.jpg").convert()
 
-himg=pygame.image.load("imgs/hands.png").convert_alpha()
+himg=pygame.image.load("data/imgs/hands.png").convert_alpha()
 
-logo=pygame.image.load("imgs/logo.png").convert_alpha()
+logo=pygame.image.load("data/imgs/logo.png").convert_alpha()
 
-coin_img=(pygame.image.load("imgs/coin0.png").convert_alpha(),
-          pygame.image.load("imgs/coin1.png").convert_alpha())
+coin_img=(pygame.image.load("data/imgs/coin0.png").convert_alpha(),
+          pygame.image.load("data/imgs/coin1.png").convert_alpha())
 
-reset_img=pygame.image.load("imgs/reset.png").convert_alpha()
-
-
+reset_img=pygame.image.load("data/imgs/reset.png").convert_alpha()
 
 
 
 
-snd_jk=pygame.mixer.Sound("sound/jk.wav")
-snd_insert=pygame.mixer.Sound("sound/insert.wav")
-snd_bb=pygame.mixer.Sound("sound/bb.wav")
-snd_win=pygame.mixer.Sound("sound/win.wav")
-snd_lose=pygame.mixer.Sound("sound/lose.wav")
-snd_draw=pygame.mixer.Sound("sound/draw.wav")
-snd_rule=pygame.mixer.Sound("sound/rule.wav")
-snd_yap=pygame.mixer.Sound("sound/yap.wav")
-snd_get_coin=pygame.mixer.Sound("sound/get_coin.wav")
+
+
+snd_jk=pygame.mixer.Sound("data/sound/jk.wav")
+snd_insert=pygame.mixer.Sound("data/sound/insert.wav")
+snd_bb=pygame.mixer.Sound("data/sound/bb.wav")
+snd_win=pygame.mixer.Sound("data/sound/win.wav")
+snd_lose=pygame.mixer.Sound("data/sound/lose.wav")
+snd_draw=pygame.mixer.Sound("data/sound/draw.wav")
+snd_rule=pygame.mixer.Sound("data/sound/rule.wav")
+snd_yap=pygame.mixer.Sound("data/sound/yap.wav")
+snd_get_coin=pygame.mixer.Sound("data/sound/get_coin.wav")
 
 
 def num_print(num,loc):

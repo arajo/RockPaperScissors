@@ -1,14 +1,13 @@
-import sys
 import pygame
 
-from CoinController import CoinController
-from Display import Display
-from HandController import HandController
-from KeyInsertReceptor import KeyInsertReceptor
+from functions.Controller.CoinController import CoinController
+from functions.Display import Display
+from functions.Controller.HandController import HandController
+from functions.KeyInsertReceptor import KeyInsertReceptor
 from Params import params
-from SoundLoader import SoundLoader
-from StateController import StateController
-from WinnerCalculator import WinnerCalculator
+from functions.Loader.SoundLoader import SoundLoader
+from functions.Controller.StateController import StateController
+from functions.WinnerCalculator import WinnerCalculator
 
 pygame.init()
 FPSL = pygame.time.Clock()

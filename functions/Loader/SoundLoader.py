@@ -3,7 +3,7 @@ import pygame
 
 class SoundLoader:
     def __init__(self):
-        self.sound_root_path = "sound/"
+        self.sound_root_path = "data/sound/"
         self.snd_jk = self.load_jjamggam()
         self.snd_insert = self.load_insert_coin()
         self.snd_bb = self.load_bbo()

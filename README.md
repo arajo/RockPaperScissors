@@ -1,7 +1,7 @@
 # 추억의 짱깸뽀 게임
 초등학교 문구점 앞에서 많이 했던.. 추억의 그 게임!!
 
-![img.png](imgs/img.png)
+![img.png](data/imgs/img.png)
 
 
 - langauge: python
