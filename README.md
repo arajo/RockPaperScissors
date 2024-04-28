@@ -6,3 +6,10 @@
 
 - langauge: python
 - 원본출처: https://blog.naver.com/kimgooni/223353137174
+
+## Run Game
+```
+> python play.py 
+```
+
+
